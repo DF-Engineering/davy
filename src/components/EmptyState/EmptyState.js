@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 import { Box, Typography } from "@material-ui/core";
 
@@ -11,6 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import LocalParkingIcon from '@material-ui/icons/LocalParking';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+
+import { getCustomer, addCustomer } from "../../actions/customerActions";
 
 const styles = theme => ({
   root: {
@@ -81,6 +84,12 @@ class EmptyState extends Component {
     this.setState({ open: false });
   };
 
+  // Add account
+  handleOnClick = (e) => {
+    e.preventDefault();
+    console.log("Adding new Client");
+    this.props.addAccount();
+  };
   
   render() {
   let imageWidth;
@@ -155,7 +164,7 @@ class EmptyState extends Component {
               </IconButton>
               <Divider className={classes.divider} />
               <InputBase disabled className={classes.input} placeholder="Apps"/>
-              <IconButton className={classes.iconButton} aria-label="Wallets">
+              <IconButton className={classes.iconButton} aria-label="Wallets" onClick={this.handleOnClick}>
                 <AccountBalanceWalletIcon style={{color: '#b26500', border: '0px', borderRadius: '3px'}} /> 
               </IconButton>
               <Divider className={classes.divider} />
@@ -245,6 +254,15 @@ EmptyState.propTypes = {
   search: PropTypes.bool,
   button: PropTypes.element,
   theme: PropTypes.object.isRequired,
+  getCustomer: PropTypes.func.isRequired,
+  addCustomer: PropTypes.func.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(EmptyState);
+const mapStateToProps = state => ({
+  plaid: state.plaid
+});
+
+export default connect(
+  mapStateToProps,
+  { getCustomer, addCustomer}
+)(withStyles(styles, { withTheme: true })(EmptyState));
