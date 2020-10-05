@@ -17,8 +17,6 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import LocalParkingIcon from '@material-ui/icons/LocalParking';
-
 import UserAvatar from "../UserAvatar";
 
 class Bar extends Component {
@@ -90,13 +88,7 @@ class Bar extends Component {
         <Toolbar>
           <Box display="flex" flexGrow={1}>
             <Typography color="inherit" variant="h6">
-              <Button
-                component={Link}
-                to="/"
-                variant="text"
-              >
-                <LocalParkingIcon style={{transform: "rotate(-180deg)", height: 30, width: 30, backgroundColor: '#1c54b2', color: 'white', border: '1px', borderRadius: '3px', borderColor: 'white'}}/>
-              </Button><br/>
+              {process.env.REACT_APP_TITLE}
             </Typography>
           </Box>
 

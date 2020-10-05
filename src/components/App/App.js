@@ -15,8 +15,6 @@ import LaunchScreen from "../LaunchScreen";
 import Bar from "../Bar";
 import Router from "../Router";
 import DialogHost from "../DialogHost";
- 
-import './App.css';
 
 const initialState = {
   ready: false,

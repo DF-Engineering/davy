@@ -1,18 +1,24 @@
 import React, { Component } from "react";
 
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import { withRouter , Link} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import { auth } from "../../firebase";
 
-import EmptyState from "../EmptyState";
-
-import { Fab, Box } from "@material-ui/core";
-
 import authentication from "../../services/authentication";
 
-import { BlurOn as BlurIcon } from "@material-ui/icons";
+import EmptyState from "../EmptyState";
+
+import { Home as HomeIcon } from "@material-ui/icons";
+
+import { Button, Box } from "@material-ui/core";
+
+import { ReactComponent as CabinIllustration } from "../../illustrations/cabin.svg";
+import { ReactComponent as InsertBlockIllustration } from "../../illustrations/insert-block.svg";
+
+import { authorizeAccount } from "../../actions/accountActions";
 
 class HomePage extends Component {
   signInWithEmailLink = () => {
@@ -70,35 +76,46 @@ class HomePage extends Component {
     }
   };
 
+  // Add account
+  handleOnTrigger = (e) => {
+    e.preventDefault();
+    this.props.authorizeAccount();
+  };
+
   render() {
     const { user } = this.props;
 
     if (user) {
-      return (
-        <EmptyState
-          title={`Welcome back, `+ user.firstName}
-          description={process.env.REACT_APP_SEARCH_MESSAGE}
-          search
-          user={user}
-        />
-      );
+      if(user.emailVerified && (user.firstName || user.lastName || user.username)) {
+        return <EmptyState 
+        image={<CabinIllustration />} 
+        title={`Welcome back, `+ user.firstName}
+        description={process.env.REACT_APP_WELCOME_MESSAGE}
+        button={
+          <Button variant="outlined" color="primary" onClick={this.handleOnTrigger}>
+          {/* <Button variant="outlined" color="primary" href={`${process.env.REACT_APP_STRIPE_OAUTH_URI}&client_id=${process.env.REACT_APP_STRIPE_CLIENT_ID}&scope=${process.env.REACT_APP_STRIPE_CLIENT_SCOPE}&redirect_uri=${process.env.REACT_APP_STRIPE_REDIRECT_URI}`}> */}
+            <Box clone mr={1}>
+              <HomeIcon />
+            </Box>
+            Complete your application            
+          </Button>
+        }z
+      />;
+      } else {
+        return <EmptyState 
+        image={<CabinIllustration />} 
+        title="Verify your Identity"
+        description="Please complete your profile and verify your email to continue"
+      />;
+      }
     }
 
     return (
-      <Box>
-        <EmptyState
-          title={process.env.REACT_APP_DESCRIPTION}
-          description={process.env.REACT_APP_MESSAGE}
-          button={
-            <Fab variant="extended" color="primary" component={Link} to="/getstarted">
-              <Box clone mr={1}>
-                <BlurIcon />
-              </Box>
-              Get Started
-            </Fab>
-          }
-        />
-      </Box>
+      <EmptyState
+        image={<InsertBlockIllustration />}
+        title={process.env.REACT_APP_DESCRIPTION}
+        description={process.env.REACT_APP_DETAILED_DESCRIPTION}
+      />
     );
   }
 
@@ -108,7 +125,14 @@ class HomePage extends Component {
 }
 
 HomePage.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object,
 };
 
-export default withRouter(HomePage);
+const mapStateToProps = state => ({
+  stripe: state.stripe
+});
+
+export default connect(
+  mapStateToProps,
+  { authorizeAccount }
+)(withRouter(HomePage));
